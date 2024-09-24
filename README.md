@@ -1,6 +1,7 @@
 # XML Preview
 
 A Neovim plugin that provides a live JSON preview for XML files.
+![xml-preview](https://github.com/user-attachments/assets/6c6af5df-ec61-4216-888d-622ab4751a61)
 
 ## Features
 
