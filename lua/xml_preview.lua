@@ -4,8 +4,6 @@ local has_handler, handler_module = pcall(require, "xmlhandler.tree")
 
 local preview_win = nil
 local preview_buf = nil
-local last_xml_path = nil
-local last_json_content = nil
 
 local function log_error(msg)
 	vim.api.nvim_err_writeln("XML Preview Error: " .. msg)
@@ -130,8 +128,6 @@ local function update_preview()
 		return
 	end
 
-	local current_path = vim.api.nvim_buf_get_name(current_buf)
-
 	if not preview_buf or not vim.api.nvim_buf_is_valid(preview_buf) then
 		preview_buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[preview_buf].buftype = "nofile"
@@ -153,19 +149,12 @@ local function update_preview()
 		vim.api.nvim_set_current_win(current_win)
 	end
 
+	show_loading()
+
 	local content = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
 	local xml_content = table.concat(content, "\n")
 
-	-- 检查路径和内容是否更改
-	if current_path == last_xml_path and last_json_content then
-		return
-	end
-
-	show_loading()
-
 	xml_to_json(xml_content, function(result)
-		last_xml_path = current_path
-		last_json_content = result
 		update_preview_content(result)
 	end)
 end
@@ -198,8 +187,6 @@ function M.handle_win_closed()
 	if preview_win and not vim.api.nvim_win_is_valid(preview_win) then
 		preview_win = nil
 		preview_buf = nil
-		last_xml_path = nil
-		last_json_content = nil
 	end
 end
 
